@@ -94,23 +94,6 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="submit__example">
-          <label>Example 3:</label>
-          <div className="submit__result">
-            <div>
-              Input: nums = [2,7,11,15], target = 9 Output: [0,1] Explanation: Because nums[0] +
-              nums[1] == 9, we return [0, 1].
-            </div>
-            <div>
-              Input: nums = [2,7,11,15], target = 9 Output: [0,1] Explanation: Because nums[0] +
-              nums[1] == 9, we return [0, 1].
-            </div>
-            <div>
-              Input: nums = [2,7,11,15], target = 9 Output: [0,1] Explanation: Because nums[0] +
-              nums[1] == 9, we return [0, 1].
-            </div>
-          </div>
-        </div>
 
         <div className="submit__testcase">
           <Collapse onChange={onChange}>
@@ -166,7 +149,7 @@ const Home = () => {
         </div>
         <div className="coding__main">
           <Editor
-            height="80vh"
+            height="75vh"
             className="editor" // By default, it fully fits with its parent
             theme={"vs-dark"}
             language={"javascript"}

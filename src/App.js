@@ -1,12 +1,29 @@
 import React from "react";
 import Home from "./pages/submit-code/Home";
 import { useRoutes } from "react-router-dom";
+import DefaultLayout from "./layouts/defaul-layout/DefaultLayout";
+import Problems from "./pages/problems/Problems";
+import Contest from "./pages/contest/Contest";
 
 const App = () => {
   let element = useRoutes([
     {
       path: "/",
-      element: <Home />,
+      element: <DefaultLayout />,
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+        {
+          path: "problems",
+          element: <Problems />,
+        },
+        {
+          path: "contest",
+          element: <Contest />,
+        },
+      ],
     },
     // {
     //   path: 'login',
