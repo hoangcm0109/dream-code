@@ -1,0 +1,62 @@
+.contest {
+    background-color: #1e243649;
+    min-height: 100vh;
+    background-image: url('https://cdn-img.thethao247.vn/upload/ssuner/2018/09/13/cac-doi-tuyen-da-co-mat-tai-cktg-20181536773448.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    .main-contest {
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .list-contest {
+        // position: absolute;
+        width: 90%;
+        transform: translate(5%, -30%);
+        background-color: lightcoral;
+        border-radius: 10px;
+        background-color: white;
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+        padding: 10px;
+        margin-bottom: 20px;
+
+        .list-contest-item {
+            display: flex;
+            align-items: center;
+            height: 150px;
+            border-radius: 10px;
+            border: 1px solid lightcoral;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .contest-content {
+            display: flex;
+            flex: 1;
+            height: 100%;
+
+            .img-contest {
+                height: 100%;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+            .text-contest {
+                margin-top: 24px;
+                margin-left: 20px;
+            }
+            .text-contest p:nth-child(1) {
+                font-weight: 600;
+                font-size: 18px;
+            }
+        }
+
+        .contest-button {
+            margin-right: 20px;
+        }
+    }
+}

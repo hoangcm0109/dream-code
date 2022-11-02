@@ -1,0 +1,22 @@
+.problems {
+    display: flex;
+
+    .list-problems {
+        flex: 1;
+        padding: 15px;
+    }
+
+    .list-date {
+        width: 500px;
+        padding: 10px;
+
+        .date {
+            margin-bottom: 15px;
+        }
+
+        .tag__list-block {
+            gap: 30px;
+            height: 300px;
+        }
+    }
+}
