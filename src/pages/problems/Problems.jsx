@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Space, Table, Calendar, Input } from "antd";
 import { Tag } from "antd";
 import { Divider } from "antd";
@@ -9,88 +9,73 @@ import {
   YoutubeOutlined,
 } from "@ant-design/icons";
 import "./style.scss";
+import problemService from "../../apis/problem/problem.service";
+import { useState } from "react";
 const { Search } = Input;
 const Problems = () => {
+  const [allData, setAllData] = useState([]);
   const columns = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <a>{text}</a>,
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      render: (text, dataDetail) =>  <a href={`/problem/${dataDetail.id}`}>{text}</a>
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
+      title: "TotalPoint",
+      dataIndex: "totalPoint",
+      key: "totalPoint",
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
+      title: "TimeLimit",
+      dataIndex: "timeLimit",
+      key: "timeLimit",
     },
     {
-      title: "Tags",
-      key: "tags",
-      dataIndex: "tags",
-      render: (_, { tags }) => (
+      title: "MemoryLimit",
+      dataIndex: "memoryLimit",
+      key: "memoryLimit",
+    },
+    {
+      title: "Contest",
+      key: "contest",
+      dataIndex: "contest",
+      render: (_, { contest }) => (
         <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? "geekblue" : "green";
-            if (tag === "loser") {
-              color = "volcano";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
+          <Tag color={"green"} key={contest.id}>
+            {contest.name}
+          </Tag>
         </>
       ),
     },
     {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
+      title: "Difficulty",
+      key: "difficulty",
+      render: (record, { id }) => (
         <Space size="middle">
-          <a>Invite {record.name}</a>
-          <a>Delete</a>
+          <div className="">Hard</div>
         </Space>
       ),
     },
   ];
-  const data = [
-    {
-      key: "1",
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-      tags: ["nice", "developer"],
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-      tags: ["loser"],
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      age: 32,
-      address: "Sidney No. 1 Lake Park",
-      tags: ["cool", "teacher"],
-    },
-  ];
-
+  
   const onPanelChange = (value, mode) => {
     console.log(value.format("YYYY-MM-DD"), mode);
   };
   const onSearch = (value) => console.log(value);
+
+  useEffect(() => {
+    problemService.getAllProblem().then((res) => {
+      if (res) {
+        setAllData(res.data);
+      }
+    });
+  }, []);
+
   return (
     <div className="problems">
       <div className="list-problems">
-        <Table columns={columns} dataSource={data} />
+        {allData && <Table columns={columns} dataSource={allData} />}
       </div>
       <div className="list-date">
         <div className="date">
@@ -98,7 +83,11 @@ const Problems = () => {
         </div>
         <div className="tag">
           <div className="tag__search">
-            <Search placeholder="input search text" onSearch={onSearch} enterButton="Search" />
+            <Search
+              placeholder="input search text"
+              onSearch={onSearch}
+              enterButton="Search"
+            />
           </div>
           <div className="tag__list">
             <Divider orientation="left">Tredding</Divider>

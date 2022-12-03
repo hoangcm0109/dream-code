@@ -2,6 +2,13 @@
     display: flex;
     flex: 1 1;
 
+    .site-collapse-custom-panel {
+        .ant-collapse-header-text,
+        .ant-collapse-expand-icon {
+            color: white;
+        }
+    }
+
     &__question {
         width: 100%;
         height: 90vh;
@@ -52,7 +59,7 @@
         background-color: #f7f9fa;
         padding: 20px;
     }
-    
+
     &__coding {
         width: 100%;
         // height: 100vh;

@@ -3,20 +3,33 @@ import { Select } from "antd";
 import { Button, message, Upload, Statistic } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import Editor from "@monaco-editor/react";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./home.scss";
+import problemService from "../../apis/problem/problem.service";
+import { useParams } from "react-router-dom";
+import submitCodeService from "../../apis/submit-code/submit-code.service";
+import { cpp } from "./dataLanguage";
 
 const { Panel } = Collapse;
 const { Option } = Select;
 const { Countdown } = Statistic;
 
+const deadline = Date.now() + 1000 * 60 * 60;
+
 const Home = () => {
+  const { id } = useParams();
+  const [dataDetailProblem, setDataDetailProblem] = useState({});
+  const [timeLimit, setTimelimit] = useState(deadline);
+  const [lang, setLang] = useState("cpp");
+  const [theme, setTheme] = useState("vs-dark");
+  const [codeSubmit, setCodeSubmit] = useState("");
+  const [listTestCase, setListTestCase] = useState([]);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [listResult, setListResult] = useState([]);
+
   const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
+  Test cases will be hidden
 `;
-  const deadline = Date.now() + 1000 * 60 * 60 * 24 * 2 + 1000 * 30;
 
   const props = {
     name: "file",
@@ -40,76 +53,89 @@ const Home = () => {
     console.log(key);
   };
 
-  const handleChange = (value) => {
+  const handleChangeLang = (value) => {
     console.log(`selected ${value}`);
+    setLang(value);
+  };
+
+  const handleChangeTheme = (value) => {
+    console.log(`selected ${value}`);
+    setTheme(value);
   };
 
   const onFinish = () => {
     console.log("finished!");
   };
 
+  useEffect(() => {
+    problemService.getProblemById(id).then((res) => {
+      if (res) {
+        setDataDetailProblem(res.data);
+        setTimelimit(res.data.timeLimit);
+        setListTestCase(res.data.testCases);
+        console.log(res);
+      }
+    });
+  }, []);
+
+  const handleEditorChange = (value, event) => {
+    setCodeSubmit(value);
+  };
+
+  const handleSubmitFinal = () => {
+    setLoadingSubmit(true);
+    const formData = new FormData();
+    formData.append("lang", lang);
+    formData.append("problemId", id);
+    formData.append("sourceString", codeSubmit);
+    submitCodeService.submitCode(formData).then((res) => {
+      if (res) {
+        setLoadingSubmit(false);
+        setListResult(res.data.data);
+      }
+    });
+  };
+
   return (
     <div className="submit">
       <div className="submit__question">
-        <h1>1. Two Sum</h1>
+        <h1>{dataDetailProblem.title}</h1>
 
-        <p>
-          Given an array of integers nums and an integer target, return indices of the two numbers
-          such that they add up to target. You may assume that each input would have exactly one
-          solution, and you may not use the same element twice. You can return the answer in any
-          order.
-        </p>
+        <p>{dataDetailProblem.content}</p>
 
-        <div className="submit__example">
-          <label>Example 1:</label>
-          <div className="submit__result">
-            <div>
-              Input: nums = [2,7,11,15], target = 9 Output: [0,1] Explanation: Because nums[0] +
-              nums[1] == 9, we return [0, 1].
+        {listTestCase &&
+          listTestCase.slice(0, 2).map((itemTest, idx) => (
+            <div className="submit__example" key={itemTest.id}>
+              <label>Example {idx + 1}:</label>
+              <div className="submit__result">
+                <div>
+                  <strong>Input</strong>: {itemTest.input}
+                  <br />
+                  <strong>Output</strong>: {itemTest.output}
+                </div>
+              </div>
             </div>
-            <div>
-              Input: nums = [2,7,11,15], target = 9 Output: [0,1] Explanation: Because nums[0] +
-              nums[1] == 9, we return [0, 1].
-            </div>
-            <div>
-              Input: nums = [2,7,11,15], target = 9 Output: [0,1] Explanation: Because nums[0] +
-              nums[1] == 9, we return [0, 1].
-            </div>
-          </div>
-        </div>
-        <div className="submit__example">
-          <label>Example 2:</label>
-          <div className="submit__result">
-            <div>
-              Input: nums = [2,7,11,15], target = 9 Output: [0,1] Explanation: Because nums[0] +
-              nums[1] == 9, we return [0, 1].
-            </div>
-            <div>
-              Input: nums = [2,7,11,15], target = 9 Output: [0,1] Explanation: Because nums[0] +
-              nums[1] == 9, we return [0, 1].
-            </div>
-            <div>
-              Input: nums = [2,7,11,15], target = 9 Output: [0,1] Explanation: Because nums[0] +
-              nums[1] == 9, we return [0, 1].
-            </div>
-          </div>
-        </div>
+          ))}
 
         <div className="submit__testcase">
           <Collapse onChange={onChange}>
-            <Panel header="This is test case 1" key="1">
-              <Collapse defaultActiveKey="1">
-                <Panel header="This is panel nest panel" key="1">
+            {listTestCase &&
+              listTestCase.map((itemTest, idx) => (
+                <Panel
+                  header={`This is test case ${idx + 1}`}
+                  key={itemTest.id}
+                  className={listResult.length !== 0 ? 'site-collapse-custom-panel' : ''}
+                  style={{
+                    background:
+                    listResult.length === 0 ? '' : 
+                      listResult[idx]?.message !== "Accepted"
+                        ? "#ff4d4f"
+                        : "#6abe39",
+                  }}
+                >
                   <div>{text}</div>
                 </Panel>
-              </Collapse>
-            </Panel>
-            <Panel header="This is test case 2" key="2">
-              <div>{text}</div>
-            </Panel>
-            <Panel header="This is test case 3" key="3">
-              <div>{text}</div>
-            </Panel>
+              ))}
           </Collapse>
         </div>
       </div>
@@ -117,17 +143,17 @@ const Home = () => {
         <div className="coding__control">
           <div>
             <Select
-              defaultValue="Javascript"
+              defaultValue="C++"
               style={{
                 width: 120,
                 marginRight: "10px",
               }}
-              onChange={handleChange}
+              onChange={handleChangeLang}
             >
-              <Option value="jack">Javascript</Option>
-              <Option value="lucy">Java</Option>
-              <Option value="disabled">C++</Option>
-              <Option value="Yiminghe">C</Option>
+              <Option value="javascript">Javascript</Option>
+              <Option value="java">Java</Option>
+              <Option value="cpp">C++</Option>
+              <Option value="c">C</Option>
             </Select>
 
             {/* Theme */}
@@ -136,26 +162,30 @@ const Home = () => {
               style={{
                 width: 120,
               }}
-              onChange={handleChange}
+              onChange={handleChangeTheme}
             >
-              <Option value="jack">vs-dark</Option>
-              <Option value="lucy">Monokai</Option>
+              <Option value="vs-dark">vs-dark</Option>
+              <Option value="Monokai">Monokai</Option>
               <Option value="disabled">light</Option>
               <Option value="Yiminghe">dracula</Option>
             </Select>
           </div>
 
-          <Countdown value={deadline} onFinish={onFinish} />
+          <Countdown
+            value={new Date().setSeconds(new Date().getSeconds() + timeLimit)}
+            onFinish={onFinish}
+            format="HH:mm:ss"
+          />
         </div>
         <div className="coding__main">
           <Editor
             height="75vh"
             className="editor" // By default, it fully fits with its parent
-            theme={"vs-dark"}
-            language={"javascript"}
+            theme={theme}
+            language={lang}
             // loading={<Loader />}
-            // value={examples[language]}
-            // editorDidMount={handleEditorDidMount}
+            value={cpp}
+            onChange={handleEditorChange}
           />
         </div>
         <div className="coding_upload">
@@ -170,9 +200,14 @@ const Home = () => {
             loading={true}
             onClick={() => undefined}
           >
-            Run code
+            End Contest
           </Button>
-          <Button danger type="primary" loading={false} onClick={() => undefined}>
+          <Button
+            danger
+            type="primary"
+            loading={loadingSubmit}
+            onClick={handleSubmitFinal}
+          >
             Submit
           </Button>
         </div>

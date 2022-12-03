@@ -26,7 +26,7 @@ const Header = () => {
     <div className="header">
       <Fragment>
         <div className="header__logo">
-          <Link to={'/'}>
+          <Link to={"/"}>
             <img
               src="https://plainenglish.io/assets/post-content/capture-images-via-webcam-using-react.png"
               alt=""
@@ -42,7 +42,9 @@ const Header = () => {
         </div>
       </Fragment>
       <div className="header__auth">
-        <div className="header__auth-item">Sign up</div>
+        <div className="header__auth-item">
+          <Link to='/login'>Login</Link>
+        </div>
         <div className="header__auth-item">Sign in</div>
       </div>
     </div>

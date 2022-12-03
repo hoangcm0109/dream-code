@@ -4,6 +4,13 @@ import { useRoutes } from "react-router-dom";
 import DefaultLayout from "./layouts/defaul-layout/DefaultLayout";
 import Problems from "./pages/problems/Problems";
 import Contest from "./pages/contest/Contest";
+import BackGroundHome from "./pages/home/BackGroundHome";
+import Login from "./pages/auth/Login";
+import AdminPage from "./layouts/admin";
+import AdminProblem from "./layouts/admin/admin-problem/AdminProblem";
+import AdminTestCase from "./layouts/admin/admin-testcase/AdminTestCase";
+import AdminContest from "./layouts/admin/admin-contest/AdminContest";
+import AdminUser from "./layouts/admin/admin-user/AdminUser";
 
 const App = () => {
   let element = useRoutes([
@@ -13,6 +20,10 @@ const App = () => {
       children: [
         {
           path: "/",
+          element: <BackGroundHome />,
+        },
+        {
+          path: "/problem/:id",
           element: <Home />,
         },
         {
@@ -25,44 +36,33 @@ const App = () => {
         },
       ],
     },
-    // {
-    //   path: 'login',
-    //   element: <Login />,
-    // },
-    // {
-    //   path: 'forgot-password',
-    //   element: <ForgetPassword />,
-    // },
-    // {
-    //   path: '/',
-    //   element: (
-    //     <RequireAuth>
-    //       <LayoutDefault />
-    //     </RequireAuth>
-    //   ),
-    //   children: [
-    //     {
-    //       path: '/',
-    //       element: <Home />,
-    //     },
-    //     {
-    //       path: '/class',
-    //       element: <Class />,
-    //     },
-    //     {
-    //       path: '/user',
-    //       element: <User />,
-    //     },
-    //   ],
-    // },
-    // {
-    //   path: '/class/:id',
-    //   element: (
-    //     <RequireAuth>
-    //       <LayoutDetailClass />
-    //     </RequireAuth>
-    //   ),
-    // },
+    {
+      path: '/admin',
+      element: <AdminPage />,
+      children: [
+        {
+          path: 'problem',
+          element: <AdminProblem />
+        },
+        {
+          path: 'contest',
+          element: <AdminContest />
+        },
+        {
+          path: 'testcase',
+          element: <AdminTestCase />
+        },
+        {
+          path: 'user',
+          element: <AdminUser />
+        },
+
+      ]
+    },
+    {
+      path: '/login',
+      element: <Login />
+    }
   ]);
 
   return element;
