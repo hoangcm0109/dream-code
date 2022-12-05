@@ -8,7 +8,8 @@
     width: 400px;
     min-height: 100vh;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-    background-color: #f0e0ff;
+    background-color: #810CA8;
+    color: #ffffff;
     padding: 20px;
     position: fixed;
     top: 0;
@@ -38,18 +39,18 @@
     padding: 20px;
     font-weight: 600;
     transition: all .2s ease-in-out;
-    color: #000000;
+    color: #ffffff;
     border-radius: 5px;
     font-size: 22px;
 }
 
 .menu_item a:hover {
-    color: #a749ff;
+    color: #810CA8;
     background-color: #ffffff;
 }
 
 .active a {
-    color: #000000;
+    color: #2D033B;
     background-color: #ffffff;
 }
 
@@ -60,7 +61,7 @@
 
 .menu_footer a {
     font-size: 20px;
-    color: #a749ff;
+    color: #ffffff;
     padding: 20px;
 }
 

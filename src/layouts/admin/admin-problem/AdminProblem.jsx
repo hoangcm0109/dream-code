@@ -10,21 +10,18 @@ import {
   Col,
   Select,
 } from "antd";
+import { PlusCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 
 import { useState } from "react";
 import problemService from "../../../apis/problem/problem.service";
 import toast from "react-hot-toast";
 import contestService from "../../../apis/contest/contest.service";
-import testcaseService from "../../../apis/testcase/testcase.service";
-
+import { CHANGE_DATA, CREATE_DATA } from "../constant";
 const { TextArea } = Input;
 const { Text } = Typography;
 const { Option } = Select;
 const style = { padding: "20px 0" };
-
-export const CHANGE_DATA = "CHANGE_DATA";
-export const CREATE_DATA = "CREATE_DATA";
 
 const AdminProblem = () => {
   const [allData, setAllData] = useState([]);
@@ -35,6 +32,15 @@ const AdminProblem = () => {
     listContestId: [],
     lstTestCase: [],
   });
+
+  const defaulTestcase = {
+    id: 0,
+    input: "",
+    output: "",
+  };
+
+  const [lstTestCaseData, setLstTestCaseData] = useState([]);
+
   const [valueRequest, setValueRequest] = useState({
     content: "",
     contestId: "",
@@ -51,14 +57,6 @@ const AdminProblem = () => {
         setDataMulti((prev) => ({
           ...prev,
           listContestId: res.data,
-        }));
-      }
-    });
-    testcaseService.getAllTestCase().then((res) => {
-      if (res) {
-        setDataMulti((prev) => ({
-          ...prev,
-          lstTestCase: res.data,
         }));
       }
     });
@@ -123,14 +121,14 @@ const AdminProblem = () => {
 
   const hanleShowDrawer = (record) => {
     setType(CHANGE_DATA);
-    setIdData(record.id);
+    setIdData(record?.id);
     setOpen(true);
-    problemService.getProblemById(record.id).then((res) => {
+    problemService.getProblemById(record?.id).then((res) => {
       setValueRequest({
         ...res.data,
-        lstTestCase: res.data?.testCases.map((item) => item.id),
         contestId: res.data?.contest.id,
       });
+      setLstTestCaseData(res?.data?.testCases)
     });
   };
 
@@ -146,6 +144,7 @@ const AdminProblem = () => {
       title: "",
       totalPoint: "",
     });
+    setLstTestCaseData([])
   };
 
   const onClose = () => {
@@ -162,12 +161,10 @@ const AdminProblem = () => {
   };
 
   const onSubmit = () => {
-    const parseDataLstTestcase = dataMulti.lstTestCase
-      .filter((item) => valueRequest.lstTestCase.includes(item.id))
-      .map((itemObj) => ({
-        input: itemObj.input,
-        output: itemObj.output,
-      }));
+    const parseDataLstTestcase = lstTestCaseData.map((itemObj) => ({
+      input: itemObj.input,
+      output: itemObj.output,
+    }));
     const dataRequest = {
       ...valueRequest,
       lstTestCase: parseDataLstTestcase,
@@ -193,6 +190,42 @@ const AdminProblem = () => {
     }
   };
 
+  const handleAddTestcase = () => {
+    const arrTemp = [...lstTestCaseData];
+    arrTemp.push({
+      ...defaulTestcase,
+      id: arrTemp.length + 1,
+    });
+    setLstTestCaseData(arrTemp);
+  };
+
+  const handleDeleteTestcase = (index) => {
+    const arrTemp = [...lstTestCaseData];
+
+    arrTemp.splice(index, 1);
+    setLstTestCaseData(arrTemp);
+  };
+
+  const handleChangeInput = (e, index) => {
+    const arrTemp = [...lstTestCaseData];
+    arrTemp.map((item) => {
+      if (item.id === index) {
+        return (item.input = e.target.value);
+      } else return item;
+    });
+    setLstTestCaseData(arrTemp);
+  };
+
+  const handleChangeOutput = (e, index) => {
+    const arrTemp = [...lstTestCaseData];
+    arrTemp.map((item) => {
+      if (item.id === index) {
+        return (item.output = e.target.value);
+      } else return item;
+    });
+    setLstTestCaseData(arrTemp);
+  };
+
   return (
     <div>
       <div style={{ margin: "15px 0" }}>
@@ -201,7 +234,11 @@ const AdminProblem = () => {
         </Button>
       </div>
       <div className="table">
-        <Table loading={allData.length === 0} columns={columns} dataSource={allData} />
+        <Table
+          loading={allData.length === 0}
+          columns={columns}
+          dataSource={allData}
+        />
       </div>
       <Drawer
         title={`${type === CHANGE_DATA ? "Change Data" : "Create Data"}`}
@@ -290,7 +327,7 @@ const AdminProblem = () => {
           />
         </Row>
         <Row gutter={16} style={style}>
-          <Col span={12}>
+          <Col span={24} style={style}>
             <Text level={5}>Contest</Text>
             <Select
               showArrow
@@ -313,26 +350,45 @@ const AdminProblem = () => {
           </Col>
           <Col span={12}>
             <Text level={5}>Test case</Text>
-            <Select
-              showArrow
-              mode="multiple"
-              placeholder="Select tags"
-              style={{ width: "100%" }}
-              value={valueRequest.lstTestCase}
-              onChange={(value) =>
-                setValueRequest({
-                  ...valueRequest,
-                  lstTestCase: value,
-                })
-              }
+            {lstTestCaseData.map((itemCase, idx) => (
+              <Row gutter={16} style={style} key={itemCase?.id}>
+                <Col span={12}>
+                  <Input
+                    value={itemCase.input}
+                    placeholder="Input"
+                    onChange={(e) => handleChangeInput(e, itemCase.id)}
+                  />
+                </Col>
+                <Col
+                  span={12}
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <Input
+                    value={itemCase.output}
+                    placeholder="Output"
+                    onChange={(e) => handleChangeOutput(e, itemCase.id)}
+                  />
+                  <CloseCircleOutlined
+                    style={{
+                      fontSize: "32px",
+                      cursor: "pointer",
+                      marginLeft: "12px",
+                    }}
+                    onClick={() => handleDeleteTestcase(idx)}
+                  />
+                </Col>
+              </Row>
+            ))}
+            <Row
+              gutter={16}
+              style={{ cursor: "pointer", marginTop: "10px" }}
+              onClick={handleAddTestcase}
             >
-              {dataMulti?.lstTestCase?.map((item, idx) => (
-                <Option value={item.id} key={idx}>
-                  Input: <strong>{item.input}</strong>, Output:{" "}
-                  <strong>{item.output}</strong>
-                </Option>
-              ))}
-            </Select>
+              <PlusCircleOutlined
+                style={{ fontSize: "24px", marginRight: "10px" }}
+              />
+              Add test case
+            </Row>
           </Col>
         </Row>
       </Drawer>

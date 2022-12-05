@@ -42,8 +42,9 @@ const Problems = () => {
       dataIndex: "contest",
       render: (_, { contest }) => (
         <>
-          <Tag color={"green"} key={contest.id}>
-            {contest.name}
+          <Tag color={"green"} key={1}>
+            {/* {contest.compilerId} */}
+            '1'
           </Tag>
         </>
       ),
