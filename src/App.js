@@ -11,12 +11,18 @@ import AdminProblem from "./layouts/admin/admin-problem/AdminProblem";
 import AdminTestCase from "./layouts/admin/admin-testcase/AdminTestCase";
 import AdminContest from "./layouts/admin/admin-contest/AdminContest";
 import AdminUser from "./layouts/admin/admin-user/AdminUser";
+import Signup from "./pages/auth/Signup";
+import RequiredAuth from "./components/required-auth/RequiredAuth";
 
 const App = () => {
   let element = useRoutes([
     {
       path: "/",
-      element: <DefaultLayout />,
+      element: (
+        <RequiredAuth>
+          <DefaultLayout />
+        </RequiredAuth>
+      ),
       children: [
         {
           path: "/",
@@ -31,38 +37,49 @@ const App = () => {
           element: <Problems />,
         },
         {
+          path: "contest/:id",
+          element: <Problems />,
+        },
+        {
           path: "contest",
           element: <Contest />,
         },
       ],
     },
     {
-      path: '/admin',
-      element: <AdminPage />,
+      path: "/admin",
+      element: (
+        <RequiredAuth>
+          <AdminPage />
+        </RequiredAuth>
+      ),
       children: [
         {
-          path: 'problem',
-          element: <AdminProblem />
+          path: "problem",
+          element: <AdminProblem />,
         },
         {
-          path: 'contest',
-          element: <AdminContest />
+          path: "contest",
+          element: <AdminContest />,
         },
         {
-          path: 'testcase',
-          element: <AdminTestCase />
+          path: "testcase",
+          element: <AdminTestCase />,
         },
         {
-          path: 'user',
-          element: <AdminUser />
+          path: "user",
+          element: <AdminUser />,
         },
-
-      ]
+      ],
     },
     {
-      path: '/login',
-      element: <Login />
-    }
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/sign-up",
+      element: <Signup />,
+    },
   ]);
 
   return element;

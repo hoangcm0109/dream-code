@@ -1,5 +1,7 @@
-import React, { Fragment } from "react";
-import { Link } from "react-router-dom";
+import React, { Fragment, useContext } from "react";
+import toast from "react-hot-toast";
+import { Link, redirect } from "react-router-dom";
+import AuthContext from "../../context/AuthProvider";
 import "./style.scss";
 
 const Header = () => {
@@ -21,6 +23,15 @@ const Header = () => {
       name: "Example",
     },
   ];
+  const { auth, setAuth } = useContext(AuthContext);
+  const accessToken = localStorage.getItem('accessToken')
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken')
+    setAuth("")
+    redirect('/login')
+    toast.success('Logout web')
+  }
 
   return (
     <div className="header">
@@ -42,10 +53,19 @@ const Header = () => {
         </div>
       </Fragment>
       <div className="header__auth">
-        <div className="header__auth-item">
-          <Link to='/login'>Login</Link>
-        </div>
-        <div className="header__auth-item">Sign in</div>
+        {auth || accessToken ? (
+          <>
+            <div className="header__auth-item">Welcome to!</div>
+            <div className="header__auth-item" onClick={handleLogout}>Logout</div>
+          </>
+        ) : (
+          <>
+            <div className="header__auth-item">
+              <Link to="/login">Login</Link>
+            </div>
+            <div className="header__auth-item">Sign in</div>
+          </>
+        )}
       </div>
     </div>
   );

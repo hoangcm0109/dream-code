@@ -43,7 +43,7 @@ const Contest = () => {
                 </div>
                 <div className="contest-button">
 
-                  <Button type="primary" danger href={`/problems`}>
+                  <Button type="primary" danger href={`/contest/` + item.id}>
                     Tham gia
                   </Button>
                 </div>

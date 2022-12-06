@@ -11,15 +11,21 @@ import {
 import "./style.scss";
 import problemService from "../../apis/problem/problem.service";
 import { useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import contestService from "../../apis/contest/contest.service";
 const { Search } = Input;
 const Problems = () => {
+  const { pathname } = useLocation();
+  const { id } = useParams();
   const [allData, setAllData] = useState([]);
   const columns = [
     {
       title: "Title",
       dataIndex: "title",
       key: "title",
-      render: (text, dataDetail) =>  <a href={`/problem/${dataDetail.id}`}>{text}</a>
+      render: (text, dataDetail) => (
+        <a href={`/problem/${dataDetail.id}`}>{text}</a>
+      ),
     },
     {
       title: "TotalPoint",
@@ -59,19 +65,27 @@ const Problems = () => {
       ),
     },
   ];
-  
+
   const onPanelChange = (value, mode) => {
     console.log(value.format("YYYY-MM-DD"), mode);
   };
   const onSearch = (value) => console.log(value);
 
   useEffect(() => {
-    problemService.getAllProblem().then((res) => {
-      if (res) {
-        setAllData(res.data);
-      }
-    });
-  }, []);
+    if (pathname.includes("contest")) {
+      contestService.getContestById(id).then((res) => {
+        if (res) {
+          setAllData(res.data.problems);
+        }
+      });
+    } else {
+      problemService.getAllProblem().then((res) => {
+        if (res) {
+          setAllData(res.data);
+        }
+      });
+    }
+  }, [id, pathname]);
 
   return (
     <div className="problems">
