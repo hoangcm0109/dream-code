@@ -181,6 +181,11 @@ const AdminProblem = () => {
         }
       });
     } else {
+      delete dataRequest?.lstTestCase;
+      delete dataRequest?.problemResults;
+      delete dataRequest?.problemContestResults;
+      delete dataRequest?.id;
+      delete dataRequest?.contestId;
       problemService.changeProblem(idData, dataRequest).then((res) => {
         if (res) {
           getCallBack();

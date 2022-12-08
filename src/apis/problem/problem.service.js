@@ -14,7 +14,7 @@ class ProblemService {
     return response.data;
   }
   async changeProblem(id, data) {
-    const response = await axiosPrivate.post(`/problem/` + id, data);
+    const response = await axiosPrivate.patch(`/problem/` + id, data);
     return response.data;
   }
   async deleteProblem(id) {

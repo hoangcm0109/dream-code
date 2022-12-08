@@ -29,8 +29,8 @@ const Header = () => {
   const handleLogout = () => {
     localStorage.removeItem('accessToken')
     setAuth("")
-    redirect('/login')
     toast.success('Logout web')
+    return redirect('/login')
   }
 
   return (

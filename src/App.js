@@ -80,6 +80,10 @@ const App = () => {
       path: "/sign-up",
       element: <Signup />,
     },
+    {
+      path: "*",
+      element: <DefaultLayout />
+    }
   ]);
 
   return element;

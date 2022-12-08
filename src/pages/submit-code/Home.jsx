@@ -9,6 +9,8 @@ import problemService from "../../apis/problem/problem.service";
 import { useParams } from "react-router-dom";
 import submitCodeService from "../../apis/submit-code/submit-code.service";
 import { cpp } from "./dataLanguage";
+import toast from "react-hot-toast";
+import contestService from "../../apis/contest/contest.service";
 
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -26,6 +28,7 @@ const Home = () => {
   const [listTestCase, setListTestCase] = useState([]);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [listResult, setListResult] = useState([]);
+  const [contestId, setContestId] = useState(null);
 
   const text = `
   Test cases will be hidden
@@ -64,7 +67,22 @@ const Home = () => {
   };
 
   const onFinish = () => {
-    console.log("finished!");
+    const userId = localStorage.getItem("userId");
+    const data = {
+      contestId,
+      userId: Number(userId),
+    };
+    contestService.endContest(data).then(
+      (res) => {
+        if (res) {
+          toast.success("End contest");
+        }
+      },
+      (error) => {
+        toast.error(error.message);
+        setLoadingSubmit(false);
+      }
+    );
   };
 
   useEffect(() => {
@@ -73,7 +91,7 @@ const Home = () => {
         setDataDetailProblem(res.data);
         setTimelimit(res.data.timeLimit);
         setListTestCase(res.data.testCases);
-        console.log(res);
+        setContestId(res.data.contest.id);
       }
     });
   }, []);
@@ -88,10 +106,30 @@ const Home = () => {
     formData.append("lang", lang);
     formData.append("problemId", id);
     formData.append("sourceString", codeSubmit);
-    submitCodeService.submitCode(formData).then((res) => {
-      if (res) {
+    submitCodeService.submitCode(formData).then(
+      (res) => {
+        if (res) {
+          setLoadingSubmit(false);
+          setListResult(res.data.data);
+          toast.success("Submit successful!");
+        }
+      },
+      (error) => {
+        toast.error(error.message);
         setLoadingSubmit(false);
-        setListResult(res.data.data);
+      }
+    );
+  };
+
+  const handleEndContest = () => {
+    const userId = localStorage.getItem("userId");
+    const data = {
+      contestId,
+      userId: Number(userId),
+    };
+    contestService.endContest(data).then((res) => {
+      if (res) {
+        toast.success("End contest");
       }
     });
   };
@@ -124,11 +162,14 @@ const Home = () => {
                 <Panel
                   header={`This is test case ${idx + 1}`}
                   key={itemTest.id}
-                  className={listResult.length !== 0 ? 'site-collapse-custom-panel' : ''}
+                  className={
+                    listResult.length !== 0 ? "site-collapse-custom-panel" : ""
+                  }
                   style={{
                     background:
-                    listResult.length === 0 ? '' : 
-                      listResult[idx]?.message !== "Accepted"
+                      listResult.length === 0
+                        ? ""
+                        : listResult[idx]?.message !== "Accepted"
                         ? "#ff4d4f"
                         : "#6abe39",
                   }}
@@ -176,6 +217,14 @@ const Home = () => {
             onFinish={onFinish}
             format="HH:mm:ss"
           />
+          <Button
+            type="primary"
+            style={{ marginRight: "10px" }}
+            // loading={true}
+            onClick={handleEndContest}
+          >
+            End Contest
+          </Button>
         </div>
         <div className="coding__main">
           <Editor
@@ -194,14 +243,6 @@ const Home = () => {
           </Upload>
         </div>
         <div className="coding__panel">
-          <Button
-            type="primary"
-            style={{ marginRight: "10px" }}
-            loading={true}
-            onClick={() => undefined}
-          >
-            End Contest
-          </Button>
           <Button
             danger
             type="primary"

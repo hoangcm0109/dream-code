@@ -18,6 +18,7 @@ const Login = () => {
       if (res) {
         setAuth(res.data.jwt);
         localStorage.setItem("accessToken", res.data.jwt);
+        localStorage.setItem("userId", res.data.userId);
         if (res.data.role === "ROLE_ADMIN") {
           toast.success('Login success')
           navigate("/admin");
@@ -26,6 +27,8 @@ const Login = () => {
           navigate("/");
         }
       }
+    }, err => {
+      toast.error('account password is incorrect')
     });
   };
 
