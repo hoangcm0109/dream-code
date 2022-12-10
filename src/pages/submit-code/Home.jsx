@@ -6,9 +6,8 @@ import Editor from "@monaco-editor/react";
 import React, { useEffect, useRef, useState } from "react";
 import "./home.scss";
 import problemService from "../../apis/problem/problem.service";
-import { useParams } from "react-router-dom";
+import { redirect, useNavigate, useParams } from "react-router-dom";
 import submitCodeService from "../../apis/submit-code/submit-code.service";
-import { cpp } from "./dataLanguage";
 import toast from "react-hot-toast";
 import contestService from "../../apis/contest/contest.service";
 
@@ -29,6 +28,9 @@ const Home = () => {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [listResult, setListResult] = useState([]);
   const [contestId, setContestId] = useState(null);
+  const [file, setFile] = useState(null);
+
+  const navigate = useNavigate()
 
   const text = `
   Test cases will be hidden
@@ -41,9 +43,7 @@ const Home = () => {
       authorization: "authorization-text",
     },
     onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
+      setFile(info.file.originFileObj);
       if (info.file.status === "done") {
         message.success(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === "error") {
@@ -76,6 +76,7 @@ const Home = () => {
       (res) => {
         if (res) {
           toast.success("End contest");
+          navigate('/contest')
         }
       },
       (error) => {
@@ -104,8 +105,11 @@ const Home = () => {
     setLoadingSubmit(true);
     const formData = new FormData();
     formData.append("lang", lang);
-    formData.append("problemId", id);
+    formData.append("problemId", Number(id));
     formData.append("sourceString", codeSubmit);
+    if (file) {
+      formData.append("source", file);
+    }
     submitCodeService.submitCode(formData).then(
       (res) => {
         if (res) {
@@ -130,6 +134,7 @@ const Home = () => {
     contestService.endContest(data).then((res) => {
       if (res) {
         toast.success("End contest");
+        navigate('/contest')
       }
     });
   };
@@ -195,6 +200,10 @@ const Home = () => {
               <Option value="java">Java</Option>
               <Option value="cpp">C++</Option>
               <Option value="c">C</Option>
+              <Option value="cs">C#</Option>
+              <Option value="py">Python</Option>
+              <Option value="ry">Ruby</Option>
+              <Option value="go">Golang</Option>
             </Select>
 
             {/* Theme */}
@@ -206,9 +215,9 @@ const Home = () => {
               onChange={handleChangeTheme}
             >
               <Option value="vs-dark">vs-dark</Option>
-              <Option value="Monokai">Monokai</Option>
-              <Option value="disabled">light</Option>
-              <Option value="Yiminghe">dracula</Option>
+              <Option value="monokai">Monokai</Option>
+              <Option value="light">light</Option>
+              <Option value="dracula">dracula</Option>
             </Select>
           </div>
 
@@ -233,7 +242,6 @@ const Home = () => {
             theme={theme}
             language={lang}
             // loading={<Loader />}
-            value={cpp}
             onChange={handleEditorChange}
           />
         </div>

@@ -90,7 +90,7 @@ const Problems = () => {
   return (
     <div className="problems">
       <div className="list-problems">
-        {allData && <Table columns={columns} dataSource={allData} />}
+        {allData && <Table loading={allData.length === 0} columns={columns} dataSource={allData} />}
       </div>
       <div className="list-date">
         <div className="date">

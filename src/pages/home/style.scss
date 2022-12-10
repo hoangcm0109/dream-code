@@ -2,5 +2,35 @@
     height: 100vh;
     background-repeat: no-repeat;
     background-size: cover;
-    background-image: url('../../assets/background.jpg');
+    background-image: url("https://cdn-img.thethao247.vn/upload/ssuner/2018/09/13/cac-doi-tuyen-da-co-mat-tai-cktg-20181536773448.jpg");
+    // margin: 0;
+    // background: #020202;
+    cursor: crosshair;
+
+    canvas {
+        display: block;
+    }
+    h1 {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+        font-size: 5em;
+        font-weight: 900;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    h2 {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+        font-size: 5em;
+        font-weight: 900;
+        -webkit-user-select: none;
+        user-select: none;
+    }
 }
+
