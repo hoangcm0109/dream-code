@@ -202,7 +202,7 @@ const Home = () => {
               <Option value="c">C</Option>
               <Option value="cs">C#</Option>
               <Option value="py">Python</Option>
-              <Option value="ry">Ruby</Option>
+              <Option value="rb">Ruby</Option>
               <Option value="go">Golang</Option>
             </Select>
 
