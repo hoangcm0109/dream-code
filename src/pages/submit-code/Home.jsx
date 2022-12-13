@@ -30,7 +30,7 @@ const Home = () => {
   const [contestId, setContestId] = useState(null);
   const [file, setFile] = useState(null);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const text = `
   Test cases will be hidden
@@ -76,7 +76,7 @@ const Home = () => {
       (res) => {
         if (res) {
           toast.success("End contest");
-          navigate('/contest')
+          navigate("/contest");
         }
       },
       (error) => {
@@ -106,9 +106,14 @@ const Home = () => {
     const formData = new FormData();
     formData.append("lang", lang);
     formData.append("problemId", Number(id));
-    formData.append("sourceString", codeSubmit);
+    const myFile = new File([codeSubmit], `myFile.${lang}`, {
+      type: "text/plain",
+      lastModified: new Date(),
+    });
     if (file) {
       formData.append("source", file);
+    } else {
+      formData.append("source", myFile);
     }
     submitCodeService.submitCode(formData).then(
       (res) => {
@@ -134,7 +139,7 @@ const Home = () => {
     contestService.endContest(data).then((res) => {
       if (res) {
         toast.success("End contest");
-        navigate('/contest')
+        navigate("/contest");
       }
     });
   };
